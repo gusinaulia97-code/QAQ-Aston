@@ -1,4 +1,5 @@
-// Создайте метод printThreeWords(), который при вызове должен отпечатать в столбец три слова: Orange, Banana, Apple.
+// Создайте метод printThreeWords(), который при вызове должен отпечатать в столбец три слова:
+// Orange, Banana, Apple.
 
 public class FruitPrinter {
     public static void printThreeWords() {
