@@ -3,7 +3,7 @@
 // если лежит в пределах от 0 (0 исключительно) до 100 (100 включительно), то “Желтый”, 
 // если больше 100 (100 исключительно) – “Зеленый”.
 
-public class ColorPrinter {
+public class Task3.java {
     public static void printColor() {
         int value = 33;
         if (value < 0) {
