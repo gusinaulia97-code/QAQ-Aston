@@ -3,7 +3,7 @@
 // и если их сумма больше или равна 0, то вывести в консоль сообщение “Сумма положительная”,
 // в противном случае - “Сумма отрицательная”.
 
- public class SumChecker {
+ public class Task2.java {
     public static void checkSumSign() {
         int a = 14;
         int b = -8;
