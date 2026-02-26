@@ -1,7 +1,7 @@
 // Напишите метод, которому в качестве аргументов передается строка и число, 
 // метод должен отпечатать в консоль указанную строку, указанное количество раз.
 
-public class Task9.java {
+public class Task8.java {
     public static void repeatString(String text, int count) {
         if (text == null || count < 0) {
             return;
