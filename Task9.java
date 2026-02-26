@@ -2,7 +2,7 @@
 // (високосный - true, не високосный - false). Каждый 4-й год является високосным, кроме каждого 100-го, 
 // при этом каждый 400-й – високосный.
 
-public class LeapYearChecker {
+public class Task9.java {
     public static boolean isLeapYear(int year) {
         return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
     }
