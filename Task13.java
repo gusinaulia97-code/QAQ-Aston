@@ -3,7 +3,7 @@
 //если обе сложно). Определить элементы одной из диагоналей можно по следующему принципу: 
 // индексы таких элементов равны, то есть [0][0], [1][1], [2][2], ..., [n][n]
 
-public static void diagonal(int x, int y) {
+public static void Task13.java(int x, int y) {
 int[][] arr = new int[x][y];
 for (int i = 0; i < arr.length; i++) {
 arr[i][arr.length - i - 1] = 1;
