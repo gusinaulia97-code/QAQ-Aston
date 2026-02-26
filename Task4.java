@@ -2,7 +2,7 @@
 // и инициализируйте их любыми значениями, которыми захотите. Если a больше или равно b, 
 // то необходимо вывести в консоль сообщение “a >= b”, в противном случае “a < b”.
 
-public class NumberComparison {
+public class Task4.java {
     public static void compareNumbers() {
         int a = 48;
         int b = 1;
