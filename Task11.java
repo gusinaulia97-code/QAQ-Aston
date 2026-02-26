@@ -4,7 +4,7 @@ public class Task11.java {
     
     public static void main(String[] args) {
         
-        int[] array = new int[101];
+        int[] array = new int[100];
 
         for(int i = 1; i < array.length; i++){
             System.out.print((array[i] = i) + " ");
