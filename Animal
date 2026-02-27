@@ -14,36 +14,189 @@
 // о сытости котов в консоль. 
 // Добавить метод, с помощью которого можно было бы добавлять еду в миску.
 
-public class Animal {  
-    public String name;  
-    public int run;  
-    public Animal() { }  
-    public Animal(String name) { this.name = name; }  
-    public void animalInfo() { System.out.println(); }  
+public class Animal {
+    static int countAnimal = 0;
+    Animal(){
+        countAnimal++;
+    }
+    void run (int range) {
+        System.out.println("Animal have run " + range + " m");
+    }
+    void swim (int range){
+        System.out.println("Animal have swam " + range + " m");
+    }
+    public static int getCountAnimal(){
+        return countAnimal;
+    }
 }
-class Cat extends Animal {  
-    protected boolean sweem;  
-    int run;  
-    public Cat(String name, int run, boolean sweem) { this.name = name; this.run = run; this.sweem = sweem; }  
-    public void catInfo() { System.out.println("CatName: " + name + " /RunLimit: " + run + " meters/" + " /Sweem:" + sweem + "/); }  
-} 
-class Dog extends Animal {    
-    public int sweem;  
-    public Dog(String name, int run, int sweem) { this.name = name; this.run = run; this.sweem = sweem; }  
-    public void dogInfo() { System.out.println("DogName: " + name + " /RunLimit: " + run + " meters/" + " /Sweem:" + sweem + "/); }  
-}  
-public class Main {  
-    public static void main(String args) {  
-        Animal animal = new Animal("CatsCategory");  
-        Cat cat = new Cat("Barsik", 200, false);  
-        animal.animalInfo();  
-        cat.animalInfo();  
-        cat.catInfo();  
-        Animal danimal = new Animal("Dogs");  
-        Dog dog = new Dog("Bobik", 500, 10);  
-        danimal.animalInfo();  
-        dog.animalInfo();  
-        dog.dogInfo();  
-    }  
-}  
-     
+public class Cat extends Animal{
+    String name;
+    static int countCat = 0;
+    
+    Cat (String name){
+        super();
+        countCat++;
+        this.name = name;
+    }
+    @Override
+    void run(int range) {
+        if (range > 200) {
+            System.out.println(name+ " cannot to run more 200 m");
+        } else {
+            System.out.println(name + " have run " + range + " m");
+        }
+    }
+    @Override
+    void swim(int range) {
+        System.out.println("Cat cannot to swim");
+    }
+    static int getCountCat(){
+        return countCat;
+    }
+}
+public class Dog extends Animal{
+    String name;
+    static int countDod = 0;
+ 
+    Dog(String name){
+        super();
+        countDod++;
+        this.name = name;
+    }
+    @Override
+    void run(int range) {
+        if (range > 500) {
+            System.out.println(name+ " cannot to run more 500 m");
+        } else {
+            System.out.println(name+ " have run " + range + " m");
+        }
+    }
+    @Override
+    void swim(int range) {
+        if (range > 10) {
+            System.out.println("Dog cannot to swim more " +range+ " m");
+        } else {
+            System.out.println(name + " have swam " + range + " m");
+        }
+    }
+    static int getCountDod (){
+        return countDod;
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Animal animal = new Animal();
+        Animal animal1 = new Animal();
+        Animal animal2 = new Animal();
+ 
+        Cat barsik = new Cat("Barsik");
+        Dog bobik = new Dog("Bobik");
+        Cat barsik1 = new Cat("Barsik");
+        Dog bobik1 = new Dog("Bobik");
+        barsik.run(150);
+        barsik.run(201);
+ 
+        bobik.run(500);
+        bobik.run(501);
+        System.out.println("Total animals: " +Animal.getCountAnimal());
+        System.out.println("Total cats: "+Cat.getCountCat());
+        System.out.println("Total dogs: "+Dog.getCountDod());
+    }
+}
+
+public class Cat {
+    private String name;
+    private boolean satiety;
+
+    public Cat(String name) {
+        this.name = name;
+        this.satiety = false;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isSatiety() {
+        return satiety;
+    }
+
+    public boolean eat(Bowl bowl, int amount) {
+        if (bowl.takeFood(amount)) {
+            this.satiety = true;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Кот " + name + ", сытость: " + satiety;
+    }
+}
+
+class Bowl {
+    private int food;
+
+    public Bowl(int initialFood) {
+        this.food = initialFood;
+    }
+
+    public int getFood() {
+        return food;
+    }
+
+    public boolean takeFood(int amount) {
+        if (food >= amount) {
+            food -= amount;
+            return true;
+        }
+        return false;
+    }
+
+    public void addFood(int amount) {
+        if (amount > 0) {
+            food += amount;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Миска, количество еды: " + food;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Bowl bowl = new Bowl(20);
+        System.out.println(bowl);
+
+        Cat[] cats = {
+            new Cat("Барсик"),
+            new Cat("Мурзик"),
+            new Cat("Черныш"),
+            new Cat("Рыжик")
+        };
+
+        for (Cat cat : cats) {
+            System.out.println(cat.getName() + " пытается поесть 7 единиц еды...");
+            cat.eat(bowl, 7);
+            System.out.println(cat);
+        }
+
+        System.out.println("\nПосле трапезы:");
+        System.out.println(bowl);
+        for (Cat cat : cats) {
+            System.out.println(cat);
+        }
+
+        System.out.println("\nДобавляем 15 единиц еды в миску...");
+        bowl.addFood(15);
+        System.out.println(bowl);
+
+        System.out.println(cats[0].getName() + " снова пытается поесть 10 единиц еды...");
+        cats[0].eat(bowl, 10);
+        System.out.println(cats[0]);
+        System.out.println(bowl);
+    }
+}
