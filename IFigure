@@ -1,0 +1,85 @@
+// Применяя интерфейсы написать программу расчета периметра и площади геометрических фигур: 
+// круг, прямоугольник, треугольник. Задать для каждой фигуры цвет заливки и цвет границы. 
+// Результат полученных характеристик [ Периметр, площадь, цвет фона, цвет границ ] по каждой фигуре вывести
+// в консоль. 
+// Попробуйте реализовать базовые методы, такие как расчет периметра фигур, в качестве дефолтных методов в интерфейсе.
+
+public interface IFigure
+{
+    double CalculatePerimeter();
+    double CalculateArea();
+    
+    string BackgroundColor { get; set; }
+    string BorderColor { get; set; }
+}
+public class Circle : IFigure
+{
+    private double radius;
+    public Circle(double radius)
+    {
+        this.radius = radius;
+    }
+    public double CalculatePerimeter() => 2 * Math.PI * radius;
+    public double CalculateArea() => Math.PI * Math.Pow(radius, 2);
+    
+    public string BackgroundColor { get; set; } = "white";
+    public string BorderColor { get; set; } = "black";
+}
+
+public class Rectangle : IFigure
+{
+    private double width;
+    private double height;
+    
+    public Rectangle(double width, double height)
+    {
+        this.width = width;
+        this.height = height;
+    }
+    
+    public double CalculatePerimeter() => 2 * (width + height);
+    public double CalculateArea() => width * height;
+    
+    public string BackgroundColor { get; set; } = "yellow";
+    public string BorderColor { get; set; } = "gray";
+}
+
+public class Triangle : IFigure
+{
+    private double baseLength;
+    private double sideLength;
+    
+    public Triangle(double baseLength, double sideLength)
+    {
+        this.baseLength = baseLength;
+        this.sideLength = sideLength;
+    }
+    
+    public double CalculatePerimeter() => baseLength + 2 * sideLength;
+    public double CalculateArea() => (baseLength * sideLength) / 2;
+    
+    public string BackgroundColor { get; set; } = "green";
+    public string BorderColor { get; set; } = "red";
+}
+
+class Program
+{
+    static void Main()
+    {
+        IFigure circle = new Circle(6);
+        IFigure rectangle = new Rectangle(3, 5);
+        IFigure triangle = new Triangle(4, 5);
+
+        Console.WriteLine($"Круг: {circle.BackgroundColor}, {circle.BorderColor}");
+        Console.WriteLine($"Периметр круга: {circle.CalculatePerimeter():F2}");
+        Console.WriteLine($"Площадь круга: {circle.CalculateArea():F2}");
+
+        Console.WriteLine($"\nПрямоугольник: {rectangle.BackgroundColor}, {rectangle.BorderColor}");
+        Console.WriteLine($"Периметр прямоугольника: {rectangle.CalculatePerimeter():F2}");
+        Console.WriteLine($"Площадь прямоугольника: {rectangle.CalculateArea():F2}");
+
+        Console.WriteLine($"\nТреугольник: {triangle.BackgroundColor}, {triangle.BorderColor}");
+        Console.WriteLine($"Периметр треугольника: {triangle.CalculatePerimeter():F2}");
+        Console.WriteLine($"Площадь треугольника: {triangle.CalculateArea():F2}");
+    }
+}
