@@ -1,0 +1,36 @@
+// Написать простой класс Телефонный Справочник, который хранит в себе список фамилий и телефонных номеров. 
+// В этот телефонный справочник с помощью метода add() можно добавлять записи, а с помощью метода get() 
+// искать номер телефона по фамилии. Следует учесть, что под одной фамилией может быть несколько телефонов 
+// (в случае однофамильцев), тогда при запросе такой фамилии должны выводиться все телефоны.
+
+public class PhoneBook {
+    private Map<String, String> phoneNumbers;
+    public PhoneBook() {
+        phoneNumbers = new HashMap<>();
+    }
+    public void add(String surname, String number) {
+        if (phoneNumbers.containsKey(surname)) {
+            phoneNumbers.get(surname).add(number);
+        } else {
+            phoneNumbers.put(surname, new String{number});
+        }
+    }
+    public String get(String surname) {
+        return phoneNumbers.getOrDefault(surname, new String{"Запись не найдена"});
+    }
+}
+public class Main {
+    public static void main(String args) {
+        PhoneBook phoneBook = new PhoneBook();
+        
+        phoneBook.add("Иванов", "123-45-67");
+        phoneBook.add("Сидоров", "891-11-12");
+        phoneBook.add("Иванов", "145-16-17");
+        
+        String ivanovNumbers = phoneBook.get("Иванов");
+        System.out.println("Номера Иванова: " + ivanovNumbers);
+        
+        String sidorovNumbers = phoneBook.get("Сидоров");
+        System.out.println("Номер Сидорова: " + sidorovNumbers);
+    }
+}
