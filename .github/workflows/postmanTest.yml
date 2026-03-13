@@ -6,97 +6,212 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Java CI with Maven
+package postmanTest;
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-jobs:
-  build:
+import java.util.Map;
 
-    runs-on: ubuntu-latest
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
 
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+public class PostmanEchoTests {
 
-// GET request
+    static String url = "https://postman-echo.com";
+    static String acceptEncoding = "gzip, deflate, br";
+    static String host = "postman-echo.com";
+    static String connection = "close";
+    static String xForwardedProto = "https";
+    static String xForwardedPort = "443";
 
-      pm.test("response is ok", function () {
-    pm.response.to.have.status(200);
-});
+    @BeforeAll                                          // Настройка базовой конфигурации RestAssured
+    public static void configureRestAssured() {
+        baseURI = url;
+        requestSpecification = given()
+                .header("accept-encoding", acceptEncoding);
+    }
 
-pm.test("response body has json with request queries", function () {
-    pm.response.to.have.jsonBody('args.foo1', 'bar1')
-        .and.have.jsonBody('args.foo2', 'bar2');
+    @Test                                               // Тест GET-запроса из Postman Echo
+    @DisplayName("Тест GET-запроса из Postman Echo")
+    public void getRequestTest() {
+        given()
+                .contentType("application/json")
+        .when()
+                .get("/get?foo1=bar1&foo2=bar2")
+        .then().log().body().assertThat()
+                .body("args.foo1", equalTo("bar1"))
+                .body("args.foo2", equalTo("bar2"))
+                .body("headers.host", equalTo(host))
+                .body("headers.x-request-start", notNullValue())
+                .body("headers.connection", equalTo(connection))
+                .body("headers.x-forwarded-proto", equalTo(xForwardedProto))
+                .body("headers.x-forwarded-port", equalTo(xForwardedPort))
+                .body("headers.x-amzn-trace-id", notNullValue())
+                .body("headers.content-type", equalTo("application/json"))
+                .body("headers.user-agent", notNullValue())
+                .body("headers.accept", equalTo("*/*"))
+                .body("headers.postman-token", equalTo(null))
+                .body("headers.accept-encoding", equalTo(acceptEncoding))
+                .body("headers.cookie", equalTo(null))
+                .body("url", equalTo(url + "/get?foo1=bar1&foo2=bar2"))
+        .statusCode(200);
+    }
 
-// POST Raw Text
+    @Test                                               // Тест POST-запроса Raw Text из Postman Echo
+    @DisplayName("Тест POST-запроса Raw Text из Postman Echo")
+    public void postRawTextTest() {
+        given()
+                .contentType("text/plain")
+                .body("This is expected to be sent back as part of response body.")
+        .when()
+                .post("/post")
+        .then().log().body().assertThat()
+                .body("args", equalTo(Map.of()))
+                .body("data", equalTo("This is expected to be sent back as part of response body."))
+                .body("files", equalTo(Map.of()))
+                .body("form", equalTo(Map.of()))
+                .body("headers.host", equalTo(host))
+                .body("headers.x-request-start", notNullValue())
+                .body("headers.connection", equalTo(connection))
+                .body("headers.x-forwarded-proto", equalTo(xForwardedProto))
+                .body("headers.x-forwarded-port", equalTo(xForwardedPort))
+                .body("headers.content-length", equalTo("58"))
+                .body("headers.x-amzn-trace-id", notNullValue())
+                .body("headers.content-type", equalTo("text/plain; charset=ISO-8859-1"))
+                .body("headers.user-agent", notNullValue())
+                .body("headers.accept", equalTo("*/*"))
+                .body("headers.postman-token", equalTo(null))
+                .body("headers.accept-encoding", equalTo(acceptEncoding))
+                .body("headers.cookie", equalTo(null))
+                .body("json", equalTo(null))
+                .body("url", equalTo(url + "/post"))
+        .statusCode(200);
+    }
 
-pm.test("response is ok", function () {
-    pm.response.to.have.status(200);
-});
+    @Test                                               // Тест POST-запроса From Data из Postman Echo
+    @DisplayName("Тест POST-запроса From Data из Postman Echo")
+    public void postFromDataTest() {
+        given()
+                .contentType("application/x-www-form-urlencoded; charset=utf-8")
+                .formParam("foo1", "bar1")
+                .formParam("foo2", "bar2")
+        .when()
+                .post("/post")
+        .then().log().body().assertThat()
+                .body("args", equalTo(Map.of()))
+                .body("data", equalTo(""))
+                .body("files", equalTo(Map.of()))
+                .body("form.foo1", equalTo("bar1"))
+                .body("form.foo2", equalTo("bar2"))
+                .body("headers.host", equalTo(host))
+                .body("headers.x-request-start", notNullValue())
+                .body("headers.connection", equalTo(connection))
+                .body("headers.x-forwarded-proto", equalTo(xForwardedProto))
+                .body("headers.x-forwarded-port", equalTo(xForwardedPort))
+                .body("headers.content-length", equalTo("19"))
+                .body("headers.x-amzn-trace-id", notNullValue())
+                .body("headers.content-type", equalTo("application/x-www-form-urlencoded; charset=utf-8"))
+                .body("headers.user-agent", notNullValue())
+                .body("headers.accept", equalTo("*/*"))
+                .body("headers.accept-encoding", equalTo(acceptEncoding))
+                .body("json.foo1", equalTo("bar1"))
+                .body("json.foo2", equalTo("bar2"))
+                .body("url", equalTo(url + "/post"))
+        .statusCode(200);
+    }
 
-pm.test("response body has json with request body", function () {
-    pm.response.to.have.jsonBody('data', 
-        'This is expected to be sent back as part of response body.');
-});
+    @Test                                               // Тест PUT-запроса из Postman Echo
+    @DisplayName("Тест PUT-запроса из Postman Echo")
+    public void putTest() {
+        given()
+                .contentType("text/plain")
+                .body("This is expected to be sent back as part of response body.")
+        .when()
+                .put("/put")
+        .then().log().body().assertThat()
+                .body("args", equalTo(Map.of()))
+                .body("data", equalTo("This is expected to be sent back as part of response body."))
+                .body("files", equalTo(Map.of()))
+                .body("form", equalTo(Map.of()))
+                .body("headers.host", equalTo(host))
+                .body("headers.x-request-start", notNullValue())
+                .body("headers.connection", equalTo(connection))
+                .body("headers.x-forwarded-proto", equalTo(xForwardedProto))
+                .body("headers.x-forwarded-port", equalTo(xForwardedPort))
+                .body("headers.content-length", equalTo("58"))
+                .body("headers.x-amzn-trace-id", notNullValue())
+                .body("headers.content-type", equalTo("text/plain; charset=ISO-8859-1"))
+                .body("headers.user-agent", notNullValue())
+                .body("headers.accept", equalTo("*/*"))
+                .body("headers.postman-token", equalTo(null))
+                .body("headers.accept-encoding", equalTo(acceptEncoding))
+                .body("headers.cookie", equalTo(null))
+                .body("json", equalTo(null))
+                .body("url", equalTo(url + "/put"))
+        .statusCode(200);
+    }
 
-// POST From Data
+    @Test                                               // Тест PATCH-запроса из Postman Echo
+    @DisplayName("Тест PATCH-запроса из Postman Echo")
+    public void patchTest() {
+        given()
+                .contentType("text/plain")
+                .body("This is expected to be sent back as part of response body.")
+        .when()
+                .patch("/patch")
+        .then().log().body().assertThat()
+                .body("args", equalTo(Map.of()))
+                .body("data", equalTo("This is expected to be sent back as part of response body."))
+                .body("files", equalTo(Map.of()))
+                .body("form", equalTo(Map.of()))
+                .body("headers.host", equalTo(host))
+                .body("headers.x-request-start", notNullValue())
+                .body("headers.connection", equalTo(connection))
+                .body("headers.x-forwarded-proto", equalTo(xForwardedProto))
+                .body("headers.x-forwarded-port", equalTo(xForwardedPort))
+                .body("headers.content-length", equalTo("58"))
+                .body("headers.x-amzn-trace-id", notNullValue())
+                .body("headers.content-type", equalTo("text/plain; charset=ISO-8859-1"))
+                .body("headers.user-agent", notNullValue())
+                .body("headers.accept", equalTo("*/*"))
+                .body("headers.postman-token", equalTo(null))
+                .body("headers.accept-encoding", equalTo(acceptEncoding))
+                .body("headers.cookie", equalTo(null))
+                .body("json", equalTo(null))
+                .body("url", equalTo(url + "/patch"))
+        .statusCode(200);
+    }
 
-pm.test("response is ok", function () {
-    pm.response.to.have.status(200);
-});
-
-pm.test("response body has json with form data", function () {
-    pm.response.to.have.jsonBody('form.foo1', 'bar1')
-        .and.have.jsonBody('form.foo2', 'bar2');
-});
-
-// PUT Request
-
-pm.test("response is ok", function () {
-    pm.response.to.have.status(200);
-});
-
-pm.test("response body has json with form data", function () {
-    pm.response.to.have.jsonBody('data', 
-        'This is expected to be sent back as part of response body.');
-});
-});
-
-// PATCH Request
-
-pm.test("response is ok", function () {
-    pm.response.to.have.status(200);
-});
-
-pm.test("response body has json with form data", function () {
-    pm.response.to.have.jsonBody('data', 
-        'This is expected to be sent back as part of response body.');
-});
-
-// DELETE Request
-
-pm.test("response is ok", function () {
-    pm.response.to.have.status(200);
-});
-
-pm.test("response body has json with form data", function () {
-    pm.response.to.have.jsonBody('data', 
-        'This is expected to be sent back as part of response body.');
-});
-
-    # Optional: Uploads the full dependency graph to GitHub to improve
-    the quality of Dependabot alerts this repository can receive
-    - name: Update dependency graph
-      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+    @Test                                               // Тест DELETE-запроса из Postman Echo
+    @DisplayName("Тест DELETE-запроса из Postman Echo")
+    public void deleteTest() {
+        given()
+                .contentType("text/plain")
+                .body("This is expected to be sent back as part of response body.")
+        .when()
+                .delete("/delete")
+        .then().log().body().assertThat()
+                .body("args", equalTo(Map.of()))
+                .body("data", equalTo("This is expected to be sent back as part of response body."))
+                .body("files", equalTo(Map.of()))
+                .body("form", equalTo(Map.of()))
+                .body("headers.host", equalTo(host))
+                .body("headers.x-request-start", notNullValue())
+                .body("headers.connection", equalTo(connection))
+                .body("headers.x-forwarded-proto", equalTo(xForwardedProto))
+                .body("headers.x-forwarded-port", equalTo(xForwardedPort))
+                .body("headers.content-length", equalTo("58"))
+                .body("headers.x-amzn-trace-id", notNullValue())
+                .body("headers.content-type", equalTo("text/plain; charset=ISO-8859-1"))
+                .body("headers.user-agent", notNullValue())
+                .body("headers.accept", equalTo("*/*"))
+                .body("headers.postman-token", equalTo(null))
+                .body("headers.accept-encoding", equalTo(acceptEncoding))
+                .body("headers.cookie", equalTo(null))
+                .body("json", equalTo(null))
+                .body("url", equalTo(url + "/delete"))
+        .statusCode(200);
+    }
+}
